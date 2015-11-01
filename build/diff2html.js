@@ -5,14 +5,15 @@
  *
  */
 
-(function(ctx, undefined) {
+'use strict';
+
+(function (ctx, undefined) {
 
   var diffParser = require('./diff-parser').DiffParser;
   var fileLister = require('./file-list-printer').FileListPrinter;
   var htmlPrinter = require('./html-printer').HtmlPrinter;
 
-  function Diff2Html() {
-  }
+  function Diff2Html() {}
 
   /*
    * Line diff type configuration
@@ -26,36 +27,35 @@
   /*
    * Generates json object from string diff input
    */
-  Diff2Html.prototype.getJsonFromDiff = function(diffInput) {
+  Diff2Html.prototype.getJsonFromDiff = function (diffInput) {
     return diffParser.generateDiffJson(diffInput);
   };
 
   /*
    * Generates the html diff. The config parameter configures the output/input formats and other options
    */
-  Diff2Html.prototype.getPrettyHtml = function(diffInput, config) {
+  Diff2Html.prototype.getPrettyHtml = function (diffInput, config) {
     var configOrEmpty = config || {};
 
     var diffJson = diffInput;
-    if(!configOrEmpty.inputFormat || configOrEmpty.inputFormat === 'diff') {
+    if (!configOrEmpty.inputFormat || configOrEmpty.inputFormat === 'diff') {
       diffJson = diffParser.generateDiffJson(diffInput);
     }
 
     var fileList = "";
-    if(configOrEmpty.showFiles === true) {
+    if (configOrEmpty.showFiles === true) {
       fileList = fileLister.generateFileList(diffJson, configOrEmpty);
     }
 
     var diffOutput = "";
-    if(configOrEmpty.outputFormat === 'side-by-side') {
+    if (configOrEmpty.outputFormat === 'side-by-side') {
       diffOutput = htmlPrinter.generateSideBySideJsonHtml(diffJson, configOrEmpty);
     } else {
       diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, configOrEmpty);
     }
 
-    return fileList + diffOutput
+    return fileList + diffOutput;
   };
-
 
   /*
    * Deprecated methods - The following methods exist only to maintain compatibility with previous versions
@@ -64,41 +64,41 @@
   /*
    * Generates pretty html from string diff input
    */
-  Diff2Html.prototype.getPrettyHtmlFromDiff = function(diffInput, config) {
+  Diff2Html.prototype.getPrettyHtmlFromDiff = function (diffInput, config) {
     var configOrEmpty = config || {};
     configOrEmpty['inputFormat'] = 'diff';
     configOrEmpty['outputFormat'] = 'line-by-line';
-    return this.getPrettyHtml(diffInput, configOrEmpty)
+    return this.getPrettyHtml(diffInput, configOrEmpty);
   };
 
   /*
    * Generates pretty html from a json object
    */
-  Diff2Html.prototype.getPrettyHtmlFromJson = function(diffJson, config) {
+  Diff2Html.prototype.getPrettyHtmlFromJson = function (diffJson, config) {
     var configOrEmpty = config || {};
     configOrEmpty['inputFormat'] = 'json';
     configOrEmpty['outputFormat'] = 'line-by-line';
-    return this.getPrettyHtml(diffJson, configOrEmpty)
+    return this.getPrettyHtml(diffJson, configOrEmpty);
   };
 
   /*
    * Generates pretty side by side html from string diff input
    */
-  Diff2Html.prototype.getPrettySideBySideHtmlFromDiff = function(diffInput, config) {
+  Diff2Html.prototype.getPrettySideBySideHtmlFromDiff = function (diffInput, config) {
     var configOrEmpty = config || {};
     configOrEmpty['inputFormat'] = 'diff';
     configOrEmpty['outputFormat'] = 'side-by-side';
-    return this.getPrettyHtml(diffInput, configOrEmpty)
+    return this.getPrettyHtml(diffInput, configOrEmpty);
   };
 
   /*
    * Generates pretty side by side html from a json object
    */
-  Diff2Html.prototype.getPrettySideBySideHtmlFromJson = function(diffJson, config) {
+  Diff2Html.prototype.getPrettySideBySideHtmlFromJson = function (diffJson, config) {
     var configOrEmpty = config || {};
     configOrEmpty['inputFormat'] = 'json';
     configOrEmpty['outputFormat'] = 'side-by-side';
-    return this.getPrettyHtml(diffJson, configOrEmpty)
+    return this.getPrettyHtml(diffJson, configOrEmpty);
   };
 
   var diffName = 'Diff2Html';
@@ -106,5 +106,4 @@
   module.exports[diffName] = diffObject;
   // Expose diff2html in the browser
   global[diffName] = diffObject;
-
-})(this);
+})(undefined);

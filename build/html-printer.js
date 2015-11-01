@@ -5,18 +5,18 @@
  *
  */
 
-(function(ctx, undefined) {
+'use strict';
+
+(function (ctx, undefined) {
 
   var lineByLinePrinter = require('./line-by-line-printer').LineByLinePrinter;
   var sideBySidePrinter = require('./side-by-side-printer').SideBySidePrinter;
 
-  function HtmlPrinter() {
-  }
+  function HtmlPrinter() {}
 
   HtmlPrinter.prototype.generateLineByLineJsonHtml = lineByLinePrinter.generateLineByLineJsonHtml;
 
   HtmlPrinter.prototype.generateSideBySideJsonHtml = sideBySidePrinter.generateSideBySideJsonHtml;
 
   module.exports['HtmlPrinter'] = new HtmlPrinter();
-
-})(this);
+})(undefined);

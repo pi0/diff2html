@@ -5,21 +5,25 @@
  *
  */
 
-(function(ctx, undefined) {
+'use strict';
+
+(function (ctx, undefined) {
 
   var jsDiff = require('diff');
   var utils = require('./utils').Utils;
 
-  function PrinterUtils() {
-  }
+  function PrinterUtils() {}
 
-  PrinterUtils.prototype.getHtmlId = function(file) {
-    var hashCode =  function(text) {
-      var hash = 0, i, chr, len;
+  PrinterUtils.prototype.getHtmlId = function (file) {
+    var hashCode = function hashCode(text) {
+      var hash = 0,
+          i,
+          chr,
+          len;
       if (text.length == 0) return hash;
       for (i = 0, len = text.length; i < len; i++) {
-        chr   = text.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
+        chr = text.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
         hash |= 0; // Convert to 32bit integer
       }
       return hash;
@@ -28,13 +32,11 @@
     return "d2h-" + hashCode(this.getDiffName(file)).toString().slice(-6);
   };
 
-  PrinterUtils.prototype.getDiffName = function(file) {
+  PrinterUtils.prototype.getDiffName = function (file) {
     var oldFilename = file.oldName;
     var newFilename = file.newName;
 
-    if (oldFilename && newFilename
-      && oldFilename !== newFilename
-      && !isDeletedName(newFilename)) {
+    if (oldFilename && newFilename && oldFilename !== newFilename && !isDeletedName(newFilename)) {
       return oldFilename + ' -> ' + newFilename;
     } else if (newFilename && !isDeletedName(newFilename)) {
       return newFilename;
@@ -45,7 +47,7 @@
     }
   };
 
-  PrinterUtils.prototype.diffHighlight = function(diffLine1, diffLine2, config) {
+  PrinterUtils.prototype.diffHighlight = function (diffLine1, diffLine2, config) {
     var lineStart1, lineStart2;
 
     var prefixSize = 1;
@@ -69,7 +71,7 @@
 
     var highlightedLine = '';
 
-    diff.forEach(function(part) {
+    diff.forEach(function (part) {
       var elemType = part.added ? 'ins' : part.removed ? 'del' : null;
       var escapedValue = utils.escape(part.value);
 
@@ -89,7 +91,7 @@
         prefix: lineStart2,
         line: removeDel(highlightedLine)
       }
-    }
+    };
   };
 
   function isDeletedName(name) {
@@ -105,5 +107,4 @@
   }
 
   module.exports['PrinterUtils'] = new PrinterUtils();
-
-})(this);
+})(undefined);

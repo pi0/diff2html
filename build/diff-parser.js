@@ -5,7 +5,9 @@
  *
  */
 
-(function(ctx, undefined) {
+'use strict';
+
+(function (ctx, undefined) {
 
   var utils = require('./utils').Utils;
 
@@ -16,19 +18,18 @@
     INFO: 'd2h-info'
   };
 
-  function DiffParser() {
-  }
+  function DiffParser() {}
 
   DiffParser.prototype.LINE_TYPE = LINE_TYPE;
 
-  DiffParser.prototype.generateDiffJson = function(diffInput) {
+  DiffParser.prototype.generateDiffJson = function (diffInput) {
     var files = [];
     var currentFile = null;
     var currentBlock = null;
     var oldLine = null;
     var newLine = null;
 
-    var saveBlock = function() {
+    var saveBlock = function saveBlock() {
       /* Add previous block(if exists) before start a new file */
       if (currentBlock) {
         currentFile.blocks.push(currentBlock);
@@ -36,7 +37,7 @@
       }
     };
 
-    var saveFile = function() {
+    var saveFile = function saveFile() {
       /*
        * Add previous file(if exists) before start a new one
        * if it has name (to avoid binary files errors)
@@ -47,7 +48,7 @@
       }
     };
 
-    var startFile = function() {
+    var startFile = function startFile() {
       saveBlock();
       saveFile();
 
@@ -58,7 +59,7 @@
       currentFile.addedLines = 0;
     };
 
-    var startBlock = function(line) {
+    var startBlock = function startBlock(line) {
       saveBlock();
 
       var values;
@@ -83,7 +84,7 @@
       currentBlock.header = line;
     };
 
-    var createLine = function(line) {
+    var createLine = function createLine(line) {
       var currentLine = {};
       currentLine.content = line;
 
@@ -99,7 +100,6 @@
         currentLine.newNumber = newLine++;
 
         currentBlock.lines.push(currentLine);
-
       } else if (utils.startsWith(line, delLinePrefixes)) {
         currentFile.deletedLines++;
 
@@ -108,7 +108,6 @@
         currentLine.newNumber = null;
 
         currentBlock.lines.push(currentLine);
-
       } else {
         currentLine.type = LINE_TYPE.CONTEXT;
         currentLine.oldNumber = oldLine++;
@@ -142,7 +141,7 @@
     var combinedNewFile = /^new file mode (\d{6})/;
     var combinedDeletedFile = /^deleted file mode (\d{6}),(\d{6})/;
 
-    diffLines.forEach(function(line) {
+    diffLines.forEach(function (line) {
       // Unmerged paths, and possibly other non-diffable files
       // https://github.com/scottgonzalez/pretty-diff/issues/11
       // Also, remove some useless lines
@@ -161,43 +160,43 @@
         currentFile.language = getExtension(currentFile.newName, currentFile.language);
       } else if (currentFile && utils.startsWith(line, '@@')) {
         startBlock(line);
-      } else if ((values = oldMode.exec(line))) {
+      } else if (values = oldMode.exec(line)) {
         currentFile.oldMode = values[1];
-      } else if ((values = newMode.exec(line))) {
+      } else if (values = newMode.exec(line)) {
         currentFile.newMode = values[1];
-      } else if ((values = deletedFileMode.exec(line))) {
+      } else if (values = deletedFileMode.exec(line)) {
         currentFile.deletedFileMode = values[1];
-      } else if ((values = newFileMode.exec(line))) {
+      } else if (values = newFileMode.exec(line)) {
         currentFile.newFileMode = values[1];
-      } else if ((values = copyFrom.exec(line))) {
+      } else if (values = copyFrom.exec(line)) {
         currentFile.oldName = values[1];
         currentFile.isCopy = true;
-      } else if ((values = copyTo.exec(line))) {
+      } else if (values = copyTo.exec(line)) {
         currentFile.newName = values[1];
         currentFile.isCopy = true;
-      } else if ((values = renameFrom.exec(line))) {
+      } else if (values = renameFrom.exec(line)) {
         currentFile.oldName = values[1];
         currentFile.isRename = true;
-      } else if ((values = renameTo.exec(line))) {
+      } else if (values = renameTo.exec(line)) {
         currentFile.newName = values[1];
         currentFile.isRename = true;
-      } else if ((values = similarityIndex.exec(line))) {
+      } else if (values = similarityIndex.exec(line)) {
         currentFile.unchangedPercentage = values[1];
-      } else if ((values = dissimilarityIndex.exec(line))) {
+      } else if (values = dissimilarityIndex.exec(line)) {
         currentFile.changedPercentage = values[1];
-      } else if ((values = index.exec(line))) {
+      } else if (values = index.exec(line)) {
         currentFile.checksumBefore = values[1];
         currentFile.checksumAfter = values[2];
         values[2] && (currentFile.mode = values[3]);
-      } else if ((values = combinedIndex.exec(line))) {
+      } else if (values = combinedIndex.exec(line)) {
         currentFile.checksumBefore = [values[2], values[3]];
         currentFile.checksumAfter = values[1];
-      } else if ((values = combinedMode.exec(line))) {
+      } else if (values = combinedMode.exec(line)) {
         currentFile.oldMode = [values[2], values[3]];
         currentFile.newMode = values[1];
-      } else if ((values = combinedNewFile.exec(line))) {
+      } else if (values = combinedNewFile.exec(line)) {
         currentFile.newFileMode = values[1];
-      } else if ((values = combinedDeletedFile.exec(line))) {
+      } else if (values = combinedDeletedFile.exec(line)) {
         currentFile.deletedFileMode = values[1];
       } else if (currentBlock) {
         createLine(line);
@@ -220,5 +219,4 @@
   }
 
   module.exports['DiffParser'] = new DiffParser();
-
-})(this);
+})(undefined);

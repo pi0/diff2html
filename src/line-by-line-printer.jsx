@@ -7,9 +7,12 @@
 
 (function(ctx, undefined) {
 
-  var diffParser = require('./diff-parser.js').DiffParser;
-  var printerUtils = require('./printer-utils.js').PrinterUtils;
-  var utils = require('./utils.js').Utils;
+  var React = require('react');
+  var ReactDOMServer = require('react-dom/server');
+
+  var diffParser = require('./diff-parser').DiffParser;
+  var printerUtils = require('./printer-utils').PrinterUtils;
+  var utils = require('./utils').Utils;
 
   function LineByLinePrinter() {
   }
@@ -25,28 +28,36 @@
           diffs = generateEmptyDiff();
         }
 
-        return '<div id="' + printerUtils.getHtmlId(file) + '" class="d2h-file-wrapper" data-lang="' + file.language + '">\n' +
-          '     <div class="d2h-file-header">\n' +
-          '       <div class="d2h-file-stats">\n' +
-          '         <span class="d2h-lines-added">' +
-          '           <span>+' + file.addedLines + '</span>\n' +
-          '         </span>\n' +
-          '         <span class="d2h-lines-deleted">' +
-          '           <span>-' + file.deletedLines + '</span>\n' +
-          '         </span>\n' +
-          '       </div>\n' +
-          '       <div class="d2h-file-name">' + printerUtils.getDiffName(file) + '</div>\n' +
-          '     </div>\n' +
-          '     <div class="d2h-file-diff">\n' +
-          '       <div class="d2h-code-wrapper">\n' +
-          '         <table class="d2h-diff-table">\n' +
-          '           <tbody class="d2h-diff-tbody">\n' +
-          '         ' + diffs +
-          '           </tbody>\n' +
-          '         </table>\n' +
-          '       </div>\n' +
-          '     </div>\n' +
-          '   </div>\n';
+        var FileElement = React.createClass({
+          render: function() {
+            return (
+              <div id={printerUtils.getHtmlId(file)} className="d2h-file-wrapper" data-lang={file.language}>
+                <div className="d2h-file-header">
+                  <div className="d2h-file-stats">
+                   <span className="d2h-lines-added">
+                     <span>+{file.addedLines}</span>
+                   </span>
+                   <span className="d2h-lines-deleted">
+                     <span>-{file.deletedLines}</span>
+                   </span>
+                  </div>
+                  <div className="d2h-file-name">{printerUtils.getDiffName(file)}</div>
+                </div>
+                <div className="d2h-file-diff">
+                  <div className="d2h-code-wrapper">
+                    <table className="d2h-diff-table">
+                      <tbody className="d2h-diff-tbody">
+                      {diffs}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+        });
+
+        return utils.unescape(ReactDOMServer.renderToStaticMarkup(<FileElement />));
       }).join('\n') +
       '</div>\n';
   };
@@ -79,11 +90,10 @@
         } else if (line.type == diffParser.LINE_TYPE.INSERTS && oldLines.length > newLines.length) {
           newLines.push(line);
         } else {
-          var j = 0;
           var oldLine, newLine;
 
           if (oldLines.length === newLines.length) {
-            for (j = 0; j < oldLines.length; j++) {
+            for (var j = 0; j < oldLines.length; j++) {
               oldLine = oldLines[j];
               newLine = newLines[j];
 
@@ -120,13 +130,13 @@
   function processLines(oldLines, newLines) {
     var lines = '';
 
-    for (j = 0; j < oldLines.length; j++) {
-      var oldLine = oldLines[j];
+    for (var i = 0; i < oldLines.length; i++) {
+      var oldLine = oldLines[i];
       var oldEscapedLine = utils.escape(oldLine.content);
       lines += generateLineHtml(oldLine.type, oldLine.oldNumber, oldLine.newNumber, oldEscapedLine);
     }
 
-    for (j = 0; j < newLines.length; j++) {
+    for (var j = 0; j < newLines.length; j++) {
       var newLine = newLines[j];
       var newEscapedLine = utils.escape(newLine.content);
       lines += generateLineHtml(newLine.type, newLine.oldNumber, newLine.newNumber, newEscapedLine);

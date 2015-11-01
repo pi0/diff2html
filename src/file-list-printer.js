@@ -7,8 +7,8 @@
 
 (function (ctx, undefined) {
 
-    var printerUtils = require('./printer-utils.js').PrinterUtils;
-    var utils = require('./utils.js').Utils;
+    var printerUtils = require('./printer-utils').PrinterUtils;
+    var utils = require('./utils').Utils;
 
     function FileListPrinter() {
     }
